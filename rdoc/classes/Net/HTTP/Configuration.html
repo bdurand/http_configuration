@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Net::HTTP::Configuration</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Net::HTTP::Configuration</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/lib/http_configuration_rb.html">
+                lib/http_configuration.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The <a href="Configuration.html">Configuration</a> class encapsulates a set
+of <a href="../HTTP.html">HTTP</a> defaults. The configuration can made
+either <a href="Configuration.html#M000007">global</a> or all requests, or
+it can be applied only within a block. <a
+href="Configuration.html">Configuration</a> blocks can also set an
+additional set of options which take precedence over the initialization
+options.
+</p>
+<p>
+Available options are :proxy_host, :proxy_port, :proxy_user,
+:proxy_password, :no_proxy, :read_timeout, :open_timeout, and :proxy. This
+last value can either contain a proxy string or the symbol :none for no
+proxy or :environment to use the values in the HTTP_PROXY/http_proxy and
+NO_PROXY/no_proxy environment variables.
+</p>
+<p>
+If you specify a proxy, but don&#8216;t want it to be used for certain
+hosts, specify the domain names in the :no_proxy option. This can either be
+an array or a comma delimited string. A request to a host name which ends
+with any of these values will not be proxied.
+</p>
+<p>
+The normal functionality for <a href="../HTTP.html">Net::HTTP</a> is still
+available, so you can set proxies and timeouts manually if needed. Because
+of the way in which https calls are made, you cannot configure a special
+proxy just for https calls.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000003">[]</a>&nbsp;&nbsp;
+      <a href="#M000004">apply</a>&nbsp;&nbsp;
+      <a href="#M000008">current</a>&nbsp;&nbsp;
+      <a href="#M000007">global</a>&nbsp;&nbsp;
+      <a href="#M000002">new</a>&nbsp;&nbsp;
+      <a href="#M000005">no_proxy?</a>&nbsp;&nbsp;
+      <a href="#M000006">set_global</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000008" class="method-detail">
+        <a name="M000008"></a>
+
+        <div class="method-heading">
+          <a href="#M000008" class="method-signature">
+          <span class="method-name">current</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the <a href="Configuration.html#M000008">current</a> configuration that
+is in scope.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000008-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000008-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/http_configuration.rb, line 136</span>
+136:       <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">current</span>
+137:         <span class="ruby-identifier">stack</span> = <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>[<span class="ruby-identifier">:net_http_configuration</span>]
+138:         <span class="ruby-identifier">config</span> = <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">last</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">stack</span>
+139:         <span class="ruby-identifier">config</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">global</span>
+140:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000007" class="method-detail">
+        <a name="M000007"></a>
+
+        <div class="method-heading">
+          <a href="#M000007" class="method-signature">
+          <span class="method-name">global</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000007-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000007-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/http_configuration.rb, line 131</span>
+131:       <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">global</span>
+132:         <span class="ruby-ivar">@global</span>
+133:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000002" class="method-detail">
+        <a name="M000002"></a>
+
+        <div class="method-heading">
+          <a href="#M000002" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000002-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000002-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/http_configuration.rb, line 85</span>
+85:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span> (<span class="ruby-identifier">options</span> = {})
+86:         <span class="ruby-ivar">@default_options</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">dup</span>
+87:         <span class="ruby-identifier">expand_proxy_config!</span>(<span class="ruby-ivar">@default_options</span>)
+88:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000005" class="method-detail">
+        <a name="M000005"></a>
+
+        <div class="method-heading">
+          <a href="#M000005" class="method-signature">
+          <span class="method-name">no_proxy?</span><span class="method-args">(host, options)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000005-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000005-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/http_configuration.rb, line 109</span>
+109:       <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">no_proxy?</span> (<span class="ruby-identifier">host</span>, <span class="ruby-identifier">options</span>)
+110:         <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:no_proxy</span>].<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Array</span>)
+111:         
+112:         <span class="ruby-identifier">host</span> = <span class="ruby-identifier">host</span>.<span class="ruby-identifier">downcase</span>
+113:         <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:no_proxy</span>].<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">pattern</span><span class="ruby-operator">|</span>
+114:           <span class="ruby-identifier">pattern</span> = <span class="ruby-identifier">pattern</span>.<span class="ruby-identifier">downcase</span>
+115:           <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">host</span>[<span class="ruby-operator">-</span><span class="ruby-identifier">pattern</span>.<span class="ruby-identifier">length</span>, <span class="ruby-identifier">pattern</span>.<span class="ruby-identifier">length</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">pattern</span>
+116:         <span class="ruby-keyword kw">end</span>
+117:         
+118:         <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>
+119:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000006" class="method-detail">
+        <a name="M000006"></a>
+
+        <div class="method-heading">
+          <a href="#M000006" class="method-signature">
+          <span class="method-name">set_global</span><span class="method-args">(options)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the options for a <a href="Configuration.html#M000007">global</a>
+configuration used for all <a href="../HTTP.html">HTTP</a> requests. The <a
+href="Configuration.html#M000007">global</a> configuration can be cleared
+by setting nil
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000006-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000006-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/http_configuration.rb, line 123</span>
+123:       <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">set_global</span> (<span class="ruby-identifier">options</span>)
+124:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>
+125:           <span class="ruby-ivar">@global</span> = <span class="ruby-constant">Configuration</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">options</span>)
+126:         <span class="ruby-keyword kw">else</span>
+127:           <span class="ruby-ivar">@global</span> = <span class="ruby-keyword kw">nil</span>
+128:         <span class="ruby-keyword kw">end</span>
+129:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000003" class="method-detail">
+        <a name="M000003"></a>
+
+        <div class="method-heading">
+          <a href="#M000003" class="method-signature">
+          <span class="method-name">[]</span><span class="method-args">(name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the specified option for the configuration.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000003-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000003-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/http_configuration.rb, line 91</span>
+91:       <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]</span> (<span class="ruby-identifier">name</span>)
+92:         <span class="ruby-ivar">@default_options</span>[<span class="ruby-identifier">name</span>]
+93:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000004" class="method-detail">
+        <a name="M000004"></a>
+
+        <div class="method-heading">
+          <a href="#M000004" class="method-signature">
+          <span class="method-name">apply</span><span class="method-args">(options = {}) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Apply the configuration to the block. If any options are provided, they
+will override the default options for the configuration.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000004-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000004-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/http_configuration.rb, line 97</span>
+ 97:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">apply</span> (<span class="ruby-identifier">options</span> = {})
+ 98:         <span class="ruby-identifier">options</span> = <span class="ruby-ivar">@default_options</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">options</span>)
+ 99:         <span class="ruby-identifier">expand_proxy_config!</span>(<span class="ruby-identifier">options</span>)
+100:         <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>[<span class="ruby-identifier">:net_http_configuration</span>] <span class="ruby-operator">||=</span> []
+101:         <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>[<span class="ruby-identifier">:net_http_configuration</span>].<span class="ruby-identifier">push</span>(<span class="ruby-identifier">options</span>)
+102:         <span class="ruby-keyword kw">begin</span>
+103:           <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">yield</span>
+104:         <span class="ruby-keyword kw">ensure</span>
+105:           <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>[<span class="ruby-identifier">:net_http_configuration</span>].<span class="ruby-identifier">pop</span>
+106:         <span class="ruby-keyword kw">end</span>
+107:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

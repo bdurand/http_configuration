@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: README</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>README</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>README
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Sun Oct 21 23:47:27 -0500 2007</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1>HTTP Configuration</h1>
+<p>
+This gem provides a means of configuring the <a
+href="../classes/Net/HTTP.html">Net::HTTP</a> package to suit your
+environment. It also fixes an issue with <a
+href="../classes/Net/HTTP.html">Net::HTTP</a> where threads will exit when
+they timeout. Even if you don&#8216;t need the configuration part of the
+code, the timeout fix may make this gem worth your while to install. This
+code can also be installed as a Rails plugin.
+</p>
+<h2>Consistent Configuration</h2>
+<p>
+Configurations are defined by <a
+href="../classes/Net/HTTP/Configuration.html">Net::HTTP::Configuration</a>
+objects. You can set a global configuration or apply a configuration to
+just a block of code. By using the configuration objects, you can normalize
+how proxies and timeouts are set across your applications and even for code
+you didn&#8216;t write.
+</p>
+<p>
+Options are passed in as a hash:
+</p>
+<ul>
+<li>:read_timeout =&gt; the default read timeout value
+
+</li>
+<li>:open_timeout =&gt; the default open timeout value
+
+</li>
+<li>:proxy_host =&gt; the host name of the proxy server
+
+</li>
+<li>:proxy_port =&gt; the port of the proxy server
+
+</li>
+<li>:proxy_user =&gt; the user name for the proxy server
+
+</li>
+<li>:proxy_password =&gt; the password for the proxy server
+
+</li>
+<li>:no_proxy =&gt; either an array or a comma delimited list of host names not
+to proxy
+
+</li>
+<li>:proxy =&gt; a shorthand method of setting the proxy information
+
+</li>
+</ul>
+<p>
+The :no_proxy values are case insensitive and only need to match the end of
+the host name. So, if you have a local network that uses *.local DNS names,
+you can set :no_proxy =&gt; &#8217;.local&#8217; to prevent the proxy
+server from being used for local hosts.
+</p>
+<p>
+The :proxy option can be used to set the proxy server information in a
+simplified manner. You can pass the proxy information as a string in the
+format [user:password@]host:port. In addition, you can pass the special
+value of :environment to automatically read the proxy information from the
+environment variables HTTP_PROXY or http_proxy and the :no_proxy value from
+the NO_PROXY or no_proxy variables. This lets you move your environment
+configuration entirely out of your ruby code if desired.
+</p>
+<p>
+When a configuration is applied to a block, you can also pass in some
+override values at the same time. In this code, the :read_timeout will be 5
+seconds instead of the default 10:
+</p>
+<pre>
+  config = Net::HTTP::Configuration.new(:proxy =&gt; :environment, :read_timeout =&gt; 10, :open_timeout =&gt; 5)
+        config.apply(:read_timeout =&gt; 5) do
+                Net::HTTP.get('http://example.com/')
+        end
+</pre>
+<h2>Adapting Code To Your Environment</h2>
+<p>
+If your code has to live in an environment that requires a proxy server,
+you may have run into problems with externally developed code where the
+author didn&#8216;t have to worry about proxies. With this code installed,
+you don&#8216;t have to worry about breaking open the code and hacking it
+up to add proxy support.
+</p>
+<p>
+Similarly, if you are building a high traffic web site that makes web
+service calls to external hosts, you may want to set HTTP timeouts to lower
+values so that if the external server is running slow, your server
+doesn&#8216;t end up eating up all its threads waiting on that server. For
+example, suppose you have a site that handles 10 requests per second and 1%
+of those requests make a web service request to another server and to
+handle that traffic, you have 50 mongrel servers available. If the external
+service goes crazy for some reason and starts taking 60 seconds to serve a
+response that normally takes less than 1 second, you will start loosing a
+mongrel server every 10 seconds and your site will be completely down in
+about 10 minutes. You could significantly lower this risk by setting the
+open and read timeouts on HTTP to be a much smaller value. You&#8216;ll
+still end up with errors, but the site won&#8216;t go down.
+</p>
+<h2>Fix For Timeouts</h2>
+<p>
+One potential issue you can have with the <a
+href="../classes/Net/HTTP.html">Net::HTTP</a> is that it handles timeouts
+by throwing interrupts. This is very effective however, interrupts have the
+unfortunate side effect of killing the current thread. This can be quite a
+problem. Consider this code:
+</p>
+<pre>
+        loop do
+          begin
+                        begin_really_important_transaction()
+            Net::HTTP.get('http://www.example.com/really_important_request')
+                rescue =&gt; e
+                  logger.warn(e)
+                        Notifications.new(:critical).send(&quot;The really important request failed; this must be fixed immediately.&quot;)
+                ensure
+                        finish_really_important_transaction()
+                end
+                sleep(300)
+        end
+</pre>
+<p>
+If the HTTP request times out, the code will not execute they way
+you&#8216;d think. It will receive an interrupt and immediately exit. The
+log warning and notification will not be sent. Further, the ensure block
+will not even be executed which could be really bad.
+</p>
+<p>
+This code simply sets the default exception to be thrown by timeouts in the
+<a href="../classes/Net.html">Net</a> module to <a
+href="../classes/Net/NetworkTimeoutError.html">Net::NetworkTimeoutError</a>
+instead of TimeoutError. Since <a
+href="../classes/Net/NetworkTimeoutError.html">Net::NetworkTimeoutError</a>
+doesn&#8216;t extend from Interrupt, your thread can go on its merry way.
+</p>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>
