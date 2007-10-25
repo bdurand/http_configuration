@@ -22,6 +22,12 @@ describe "Net::HTTP::Configuration" do
     config[:no_proxy].should == ['.local1', '.local2']
   end
   
+  it "should be able to parse the no_proxy option" do
+    Net::HTTP::Configuration.new(:no_proxy => 'host')[:no_proxy].should == ['host']
+    Net::HTTP::Configuration.new(:no_proxy => 'host1, host2')[:no_proxy].should == ['host1', 'host2']
+    Net::HTTP::Configuration.new(:no_proxy => ['host3', 'host4'])[:no_proxy].should == ['host3', 'host4']
+  end
+  
   it "should be able to parse a proxy with user and password" do
     config = Net::HTTP::Configuration.new(:proxy => 'http://user:password@proxy.local:9000', :no_proxy => '.local1, .local2')
     config[:proxy_host].should == 'proxy.local'

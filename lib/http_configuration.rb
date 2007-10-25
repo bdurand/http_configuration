@@ -143,22 +143,22 @@ module Net
       
       def expand_proxy_config! (options)
         proxy_config = options[:proxy]
-        return unless proxy_config
-        options.delete(:proxy)
-        
-        if proxy_config == :environment
-          parse_proxy!(ENV['HTTP_PROXY'] || ENV['http_proxy'], options)
-          parse_no_proxy!(ENV['NO_PROXY'] || ENV['no_proxy'], options)
-        elsif proxy_config == :none
-          options[:proxy_user] = nil
-          options[:proxy_password] = nil
-          options[:proxy_host] = nil
-          options[:proxy_port] = nil
-          options[:no_proxy] = nil
-        else
-          parse_proxy!(proxy_config, options)
-          parse_no_proxy!(options[:no_proxy], options)
+        if proxy_config
+          options.delete(:proxy)
+          if proxy_config == :environment
+            parse_proxy!(ENV['HTTP_PROXY'] || ENV['http_proxy'], options)
+            options[:no_proxy] = ENV['NO_PROXY'] || ENV['no_proxy']
+          elsif proxy_config == :none
+            options[:proxy_user] = nil
+            options[:proxy_password] = nil
+            options[:proxy_host] = nil
+            options[:proxy_port] = nil
+            options[:no_proxy] = nil
+          else
+            parse_proxy!(proxy_config, options)
+          end
         end
+        parse_no_proxy!(options[:no_proxy], options)
       end
       
       def parse_proxy! (proxy, options)
