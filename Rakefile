@@ -1,17 +1,15 @@
 require 'rubygems'
 require 'rake'
-require 'rake/testtask'
 require 'rake/rdoctask'
 require 'rake/gempackagetask'
+require 'spec/rake/spectask'
 
 desc 'Default: run unit tests.'
 task :default => :test
 
 desc 'Test http_configuration.'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
+Spec::Rake::SpecTask.new(:test) do |t|
+  t.spec_files = 'spec/**/*_spec.rb'
 end
 
 desc 'Generate documentation for http_configuration.'
