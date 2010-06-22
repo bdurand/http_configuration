@@ -1,43 +1,45 @@
 require 'rubygems'
 require 'rake'
 require 'rake/rdoctask'
-require 'rake/gempackagetask'
-require 'spec/rake/spectask'
 
 desc 'Default: run unit tests.'
 task :default => :test
 
-desc 'Test http_configuration.'
-Spec::Rake::SpecTask.new(:test) do |t|
-  t.spec_files = 'spec/**/*_spec.rb'
+begin
+  require 'spec/rake/spectask'
+  desc 'Test the gem.'
+  Spec::Rake::SpecTask.new(:test) do |t|
+    t.spec_files = FileList.new('spec/**/*_spec.rb')
+  end
+rescue LoadError
+  tast :test do
+    STDERR.puts "You must have rspec >= 1.3.0 to run the tests"
+  end
 end
 
-desc 'Generate documentation for http_configuration.'
+desc 'Generate documentation for the gem.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.options << '--title' << 'HTTP Configuration' << '--line-numbers' << '--inline-source' << '--main' << 'README'
-  rdoc.rdoc_files.include('README')
+  rdoc.options << '--title' << 'HTTP Configuration' << '--line-numbers' << '--inline-source' << '--main' << 'README.rdoc'
+  rdoc.rdoc_files.include('README.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-spec = Gem::Specification.new do |s| 
-  s.name = "http_configuration"
-  s.version = "1.0.2"
-  s.author = "Brian Durand"
-  s.platform = Gem::Platform::RUBY
-  s.summary = "Provide configuration options for Net::HTTP"
-  s.files = FileList["lib/*", "init.rb", "MIT-LICENSE", 'Rakefile'].to_a
-  s.require_path = "lib"
-  s.test_files = FileList["{spec}/**/*_spec.rb"].to_a
-  s.has_rdoc = true
-  s.rdoc_options << '--title' << 'HTTP Configuration' << '--line-numbers' << '--inline-source' << '--main' << 'README'
-  s.extra_rdoc_files = ["README"]
-  s.homepage = "http://httpconfig.rubyforge.org"
-  s.rubyforge_project = "httpconfig"
-  s.email = 'brian@embellishedvisions.com'
-  s.requirements = 'rspec 1.0.8 or higher is needed to run the tests'
-end
- 
-Rake::GemPackageTask.new(spec) do |pkg| 
-  pkg.need_tar = true 
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    gem.name = "http_configuration"
+    gem.summary = %Q{Gem that provides the ability to set defaults for proxies and timeouts for Net::HTTP.}
+    gem.description = %Q(Gem that provides the ability to set defaults for proxies and timeouts for Net::HTTP. Simplifies integration of HTTP calls into any environment and provides a unified interface for setting values.)
+    gem.email = "brian@embellishedvisions.com"
+    gem.homepage = "http://github.com/bdurand/acts_as_revisionable"
+    gem.authors = ["Brian Durand"]
+    gem.rdoc_options = ["--charset=UTF-8", "--main", "README.rdoc"]
+    
+    gem.add_development_dependency('rspec', '>= 1.3.0')
+    gem.add_development_dependency('jeweler')
+  end
+
+  Jeweler::GemcutterTasks.new
+rescue LoadError
 end

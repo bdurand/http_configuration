@@ -2,7 +2,7 @@ require 'rubygems'
 require 'spec'
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'http_configuration'))
 
-describe "Net::HTTP::Configuration" do
+describe Net::HTTP::Configuration do
   
   it "should set the default configuration options" do
     config = Net::HTTP::Configuration.new(:proxy_host => 'localhost', :proxy_port => 8080, :no_proxy => ['local1', 'local2'])
@@ -142,28 +142,6 @@ describe "Net::HTTP" do
       http = Net::HTTP.new('localhost', 80)
       http.open_timeout.should == 6
     end
-  end
-  
-end
-
-describe "Net::BufferedIO" do
-  
-  it "should timeout without an interrupt" do
-    io = Net::BufferedIO.new(StringIO.new)
-    lambda do
-      io.send(:timeout, 1){sleep(2)}
-    end.should raise_error(Net::NetworkTimeoutError)
-  end
-
-end
-
-describe "Net::Protocol" do
-  
-  it "should timeout without an interrupt" do
-    http = Net::HTTP.new('localhost')
-    lambda do
-      http.send(:timeout, 1){sleep(2)}
-    end.should raise_error(Net::NetworkTimeoutError)
   end
   
 end

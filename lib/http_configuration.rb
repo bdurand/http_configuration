@@ -2,33 +2,7 @@ require 'net/protocol'
 require 'net/http'
 
 module Net
-  
-  class Protocol
     
-    private
-    
-    # Default error type to a non-interrupt exception
-    def timeout (secs, errorType = NetworkTimeoutError)
-      super(secs, errorType)
-    end
-    
-  end
-  
-  class BufferedIO
-    
-    private
-    
-    # Default error type to a non-interrupt exception
-    def timeout (secs, errorType = NetworkTimeoutError)
-      super(secs, errorType)
-    end
-    
-  end
-  
-  # Error thrown by network timeouts
-  class NetworkTimeoutError < StandardError
-  end
-  
   class HTTP
     
     class << self
@@ -106,37 +80,39 @@ module Net
         end
       end
       
-      def self.no_proxy? (host, options)
-        return false unless options[:no_proxy].kind_of?(Array)
+      class << self
+        def no_proxy? (host, options)
+          return false unless options[:no_proxy].kind_of?(Array)
         
-        host = host.downcase
-        options[:no_proxy].each do |pattern|
-          pattern = pattern.downcase
-          return true if host[-pattern.length, pattern.length] == pattern
-        end
+          host = host.downcase
+          options[:no_proxy].each do |pattern|
+            pattern = pattern.downcase
+            return true if host[-pattern.length, pattern.length] == pattern
+          end
         
-        return false
-      end
-      
-      # Set the options for a global configuration used for all HTTP requests. The global configuration can be cleared
-      # by setting nil
-      def self.set_global (options)
-        if options
-          @global = Configuration.new(options)
-        else
-          @global = nil
+          return false
         end
-      end
       
-      def self.global
-        @global
-      end
+        # Set the options for a global configuration used for all HTTP requests. The global configuration can be cleared
+        # by setting nil
+        def set_global (options)
+          if options
+            @global = Configuration.new(options)
+          else
+            @global = nil
+          end
+        end
       
-      # Get the current configuration that is in scope.
-      def self.current
-        stack = Thread.current[:net_http_configuration]
-        config = stack.last if stack
-        config || global
+        def global
+          @global
+        end
+      
+        # Get the current configuration that is in scope.
+        def current
+          stack = Thread.current[:net_http_configuration]
+          config = stack.last if stack
+          config || global
+        end
       end
       
       private

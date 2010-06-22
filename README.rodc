@@ -33,24 +33,3 @@ When a configuration is applied to a block, you can also pass in some override v
 If your code has to live in an environment that requires a proxy server, you may have run into problems with externally developed code where the author didn't have to worry about proxies. With this code installed, you don't have to worry about breaking open the code and hacking it up to add proxy support.
 
 Similarly, if you are building a high traffic web site that makes web service calls to external hosts, you may want to set HTTP timeouts to lower values so that if the external server is running slow, your server doesn't end up eating up all its threads waiting on that server. For example, suppose you have a site that handles 10 requests per second and 1% of those requests make a web service request to another server and to handle that traffic, you have 50 mongrel servers available. If the external service goes crazy for some reason and starts taking 60 seconds to serve a response that normally takes less than 1 second, you will start loosing a mongrel server every 10 seconds and your site will be completely down in about 10 minutes. You could significantly lower this risk by setting the open and read timeouts on HTTP to be a much smaller value. You'll still end up with errors, but the site won't go down.
-
-== Fix For Timeouts
-
-One potential issue you can have with the Net::HTTP is that it handles timeouts by throwing interrupts. This is very effective however, interrupts have the unfortunate side effect of killing the current thread. This can be quite a problem. Consider this code:
-
-	loop do
-	  begin
-			begin_really_important_transaction()
-	    Net::HTTP.get('http://www.example.com/really_important_request')
-		rescue => e
-		  logger.warn(e)
-			Notifications.new(:critical).send("The really important request failed; this must be fixed immediately.")
-		ensure
-			finish_really_important_transaction()
-		end
-		sleep(300)
-	end
-
-If the HTTP request times out, the code will not execute they way you'd think. It will receive an interrupt and immediately exit. The log warning and notification will not be sent. Further, the ensure block will not even be executed which could be really bad.
-
-This code simply sets the default exception to be thrown by timeouts in the Net module to Net::NetworkTimeoutError instead of TimeoutError. Since Net::NetworkTimeoutError doesn't extend from Interrupt, your thread can go on its merry way.
