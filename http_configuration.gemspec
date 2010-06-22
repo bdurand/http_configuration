@@ -16,8 +16,12 @@ Gem::Specification.new do |s|
     "README.rodc"
   ]
   s.files = [
-    "MIT-LICENSE",
+    ".gitignore",
+     "MIT-LICENSE",
+     "README.rodc",
      "Rakefile",
+     "VERSION",
+     "http_configuration.gemspec",
      "lib/http_configuration.rb",
      "spec/http_configuration_spec.rb"
   ]
