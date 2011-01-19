@@ -1,5 +1,3 @@
-require 'rubygems'
-require 'spec'
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'http_configuration'))
 
 describe Net::HTTP::Configuration do
@@ -97,7 +95,7 @@ describe Net::HTTP::Configuration do
   
 end
 
-describe "Net::HTTP" do
+describe Net::HTTP do
   
   it "should work normally if no configuration has been set" do
     Net::HTTP.should_receive(:new_without_configuration).with('localhost', 80, nil, nil, nil, nil)
